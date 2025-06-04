@@ -3,7 +3,8 @@
 
 #include "CarPawn.h"
 
-// Sets default values
+#include "ArcadeDriveComponent.h"
+
 ACarPawn::ACarPawn()
 {
 	CarSkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Skeletal_Mesh"));
@@ -11,6 +12,18 @@ ACarPawn::ACarPawn()
 	
 	MainBodyComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Main_Body"));
 	MainBodyComponent->SetupAttachment(CarSkeletalMeshComponent);
+
+	CockpitConsoleComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Cockpit_Console"));
+	CockpitConsoleComponent->SetupAttachment(MainBodyComponent);
+
+	Interior = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Interior"));
+	Interior->SetupAttachment(MainBodyComponent);
+
+	EngineComponents = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Engine_Components"));
+	EngineComponents->SetupAttachment(MainBodyComponent);
+
+	InteriorExteriorWindows = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Interior_Exterior_Windows"));
+	InteriorExteriorWindows->SetupAttachment(MainBodyComponent);
 	
 	DoorRightComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Door_Right"));
 	DoorRightComponent->SetupAttachment(CarSkeletalMeshComponent);
@@ -18,48 +31,54 @@ ACarPawn::ACarPawn()
 	DoorLeftComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Door_Left"));
 	DoorLeftComponent->SetupAttachment(CarSkeletalMeshComponent);
 	
-	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	DriveComponent = CreateDefaultSubobject<UArcadeDriveComponent>(TEXT("DriveComponent"));
+	
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-// Called when the game starts or when spawned
 void ACarPawn::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
-// Called every frame
 void ACarPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	if (DriveComponent) DriveComponent->TickUpdate(DeltaTime);
 }
 
-// Called to bind functionality to input
 void ACarPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	PlayerInputComponent->BindVectorAxis("IA_Drive", this, &ACarPawn::HandleMoveInput);
 }
 
+void ACarPawn::HandleMoveInput(FVector MoveInput)
+{
+	DriveComponent->MoveForward(MoveInput.Y);
+	DriveComponent->Turn(MoveInput.X);
+}
+
+//TODO Move that whole editor logic to another class?
 #if WITH_EDITOR
 void ACarPawn::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
-
-	const FName PropertyName = PropertyChangedEvent.Property ? PropertyChangedEvent.Property->GetFName() : NAME_None;
-
-	if (PropertyName == GET_MEMBER_NAME_CHECKED(ACarPawn, CarSkeletalMesh) && CarSkeletalMesh)
+	
+	if (!CarSkeletalMeshComponent)
 	{
+		UE_LOG(LogTemp, Error, TEXT("CarSkeletalMeshComponent is null in PostEditChangeProperty!"));
+		return;
+	}
+	
+	if (CarSkeletalMesh)
+	{
+		//Remove SK_ from skeletal mesh name
 		VehicleName = CarSkeletalMesh->GetName().RightChop(3);
+		//Clear some stupid naming errors
 		VehicleName = VehicleName.Replace(TEXT("-"), TEXT("_"));
-
-		if (!CarSkeletalMeshComponent)
-		{
-			UE_LOG(LogTemp, Error, TEXT("CarSkeletalMeshComponent is null in PostEditChangeProperty!"));
-			return;
-		}
 	
 		CarSkeletalMeshComponent->SetSkeletalMesh(CarSkeletalMesh);
 		SetupStaticMeshes();
@@ -69,6 +88,9 @@ void ACarPawn::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEven
 void ACarPawn::SetupStaticMeshes() const
 {
 	SetupMeshComponent(*MainBodyComponent, FName(VehicleName));
+	SetupMeshComponent(*CockpitConsoleComponent, FName(VehicleName));
+	SetupMeshComponent(*Interior, FName(VehicleName));
+	SetupMeshComponent(*EngineComponents, FName(VehicleName));
 	SetupMeshComponent(*DoorRightComponent, TEXT("door_right"));
 	SetupMeshComponent(*DoorLeftComponent, TEXT("door_left"));
 }

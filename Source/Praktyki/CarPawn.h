@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ArcadeDriveComponent.h"
 #include "GameFramework/Pawn.h"
 #include "CarPawn.generated.h"
 
@@ -29,11 +30,28 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	USkeletalMeshComponent* CarSkeletalMeshComponent;
 
+	UPROPERTY(VisibleAnywhere)
+	UArcadeDriveComponent* DriveComponent;
+
 	UPROPERTY(EditAnywhere)
 	USkeletalMesh* CarSkeletalMesh;
 
+	//Static Mesh Components
+
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* MainBodyComponent;
+
+	UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* CockpitConsoleComponent;
+
+	UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* Interior;
+
+	UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* EngineComponents;
+
+	UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* InteriorExteriorWindows;
 
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* DoorRightComponent;
@@ -46,6 +64,7 @@ public:
 #endif
 
 private:
+	void HandleMoveInput(FVector MoveInput);
 	FString VehicleName;
 
 #if WITH_EDITOR
