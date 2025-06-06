@@ -26,9 +26,10 @@ void UArcadeDriveComponent::Turn(const float Value)
 
 void UArcadeDriveComponent::TickUpdate(float DeltaTime)
 {
+	FVector Forward = GetOwner()->GetActorForwardVector();
+	
 	if (FMath::Abs(ForwardInput) > KINDA_SMALL_NUMBER)
 	{
-		FVector Forward = GetOwner()->GetActorForwardVector();
 		Velocity += Forward * ForwardInput * Acceleration * DeltaTime;
 		Velocity = Velocity.GetClampedToMaxSize(MaxSpeed);
 	}
@@ -38,8 +39,6 @@ void UArcadeDriveComponent::TickUpdate(float DeltaTime)
 		Velocity *= 0.98f;
 	}
 
- 	GetOwner()->AddActorWorldOffset(Velocity * DeltaTime, true);
-
 	if (FMath::Abs(TurnInput) > KINDA_SMALL_NUMBER)
 	{
 		const float TurnAmount = TurnInput * TurnSpeed * DeltaTime;
@@ -47,5 +46,9 @@ void UArcadeDriveComponent::TickUpdate(float DeltaTime)
 		NewRotation.Yaw += TurnAmount;
 		GetOwner()->SetActorRotation(NewRotation);
 	}
+
+	//TODO Handle it so that vehicle can be reversed but velocity remains 
+	Velocity = Forward * Velocity.Length();
+	GetOwner()->AddActorWorldOffset(Velocity * DeltaTime, true);
 }
 

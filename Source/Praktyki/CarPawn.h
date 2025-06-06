@@ -64,7 +64,6 @@ public:
 #endif
 
 private:
-	void HandleMoveInput(FVector MoveInput);
 	FString VehicleName;
 
 #if WITH_EDITOR

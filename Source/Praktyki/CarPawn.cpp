@@ -51,14 +51,6 @@ void ACarPawn::Tick(float DeltaTime)
 void ACarPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-	PlayerInputComponent->BindVectorAxis("IA_Drive", this, &ACarPawn::HandleMoveInput);
-}
-
-void ACarPawn::HandleMoveInput(FVector MoveInput)
-{
-	DriveComponent->MoveForward(MoveInput.Y);
-	DriveComponent->Turn(MoveInput.X);
 }
 
 //TODO Move that whole editor logic to another class?

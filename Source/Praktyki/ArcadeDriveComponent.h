@@ -27,7 +27,7 @@ public:
 	float Acceleration = 2000.f;
 
 	UPROPERTY(EditAnywhere)
-	float TurnSpeed = 100.f;
+	float TurnSpeed = 40.f;
 
 	UPROPERTY(EditAnywhere)
 	float MaxSpeed = 4000.f;
