@@ -83,25 +83,24 @@ void ACarPlayerController::HandleOverlapingCheckpoint(ACheckpoint& Checkpoint)
 	}
 
 	int NextIndex = GetNextCheckpointIndex();
-
-	if (NextIndex >= Checkpoints.Num() - 1) //Last index is length - 1
+	if (NextIndex > Checkpoints.Num() - 1)
 	{
 		NextIndex = 0;
-		HandleFinishingLap();
 	}
-
-	CurrentCheckpointDisplay = NextIndex + 1;
 	
 	if (Checkpoints[NextIndex] == &Checkpoint)
 	{
+		CurrentCheckpointDisplay = NextIndex + 1;
 		CurrentCheckpoint = &Checkpoint;
 		CurrentCheckpoint->WaypointMesh->SetVisibility(false);
 
 		NextIndex = GetNextCheckpointIndex();
 		
-		if (NextIndex >= Checkpoints.Num() - 1)
+		if (NextIndex > Checkpoints.Num() - 1) //Last index is length - 1
 		{
+			CurrentCheckpointDisplay = 0;
 			NextIndex = 0;
+			HandleFinishingLap();
 		}
 		
 		Checkpoints[NextIndex]->WaypointMesh->SetVisibility(true);

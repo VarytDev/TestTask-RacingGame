@@ -75,10 +75,10 @@ void ARacingGameMode::HandleLapCompleted(int Lap, float BestTime) const
 	
 	FText FormattedTime = FText::Format(FText::FromString("{Minutes}:{Seconds}"), Args);
 	
-	if (Lap >= LapLimit) ShowRaceEndScreen(FText::AsNumber(BestTime));
+	if (Lap >= LapLimit) ShowRaceEndScreen(FormattedTime);
 }
 
-void ARacingGameMode::ShowRaceEndScreen(FText BestTime) const
+void ARacingGameMode::ShowRaceEndScreen(const FText& BestTime) const
 {
 	if (WidgetClass)
 	{

@@ -30,7 +30,7 @@ public:
 
 protected:
 	void HandleLapCompleted(int Lap, float BestTime) const;
-	void ShowRaceEndScreen(FText BestTime) const;
+	void ShowRaceEndScreen(const FText& BestTime) const;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	TSubclassOf<UUserWidget> WidgetClass;
