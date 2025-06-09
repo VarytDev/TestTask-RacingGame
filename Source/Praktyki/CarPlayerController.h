@@ -7,6 +7,8 @@
 #include "InputMappingContext.h"
 #include "CarPlayerController.generated.h"
 
+DECLARE_DELEGATE_TwoParams(FOnLapCompleted, int, float);
+
 class ACheckpoint;
 /**
  * 
@@ -31,6 +33,8 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 	float BestLapTime = 0.0f;
+
+	FOnLapCompleted OnLapCompleted;
 	
 protected:
 	UPROPERTY(VisibleAnywhere)

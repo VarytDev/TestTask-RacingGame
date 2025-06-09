@@ -117,6 +117,8 @@ void ACarPlayerController::HandleFinishingLap()
 
 	CurrentLapTime = 0;
 	CurrentLap++;
+
+	OnLapCompleted.ExecuteIfBound(CurrentLap, BestLapTime);
 }
 
 int ACarPlayerController::GetNextCheckpointIndex() const

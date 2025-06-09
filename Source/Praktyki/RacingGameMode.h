@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "CarPlayerController.h"
 #include "GameFramework/GameModeBase.h"
 #include "RacingGameMode.generated.h"
 
@@ -16,6 +17,7 @@ class PRAKTYKI_API ARacingGameMode : public AGameModeBase
 
 public:
 	virtual void BeginPlay() override;
+	virtual void Destroyed() override;
 	
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	bool IsTimeRestricted;
@@ -25,4 +27,14 @@ public:
 	bool IsLapLimited;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	int LapLimit;
+
+protected:
+	void HandleLapCompleted(int Lap, float BestTime) const;
+	void ShowRaceEndScreen(FText BestTime) const;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<UUserWidget> WidgetClass;
+	
+	ACarPlayerController* PC;
+	FTimerHandle TimerHandle;
 };
